@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the game map
+#define MAP_WIDTH 10
+#define MAP_HEIGHT 10
+
+// Define the player character
+struct Player {
+  int x;
+  int y;
+};
+
+// Define the environmental obstacles
+enum Obstacle {
+  TREE,
+  ROCK,
+  WATER
+};
+
+// Define the game state
+struct GameState {
+  struct Player player;
+  enum Obstacle map[MAP_WIDTH][MAP_HEIGHT];
+};
+
+// Initialize the game state
+void init_game_state(struct GameState *state) {
+  state->player.x = 0;
+  state->player.y = 0;
+
+  for (int i = 0; i < MAP_WIDTH; i++) {
+    for (int j = 0; j < MAP_HEIGHT; j++) {
+      state->map[i][j] = rand() % 3;
+    }
+  }
+}
+
+// Move the player
+void move_player(struct GameState *state, char direction) {
+  switch (direction) {
+    case 'w':
+      state->player.y--;
+      break;
+    case 'a':
+      state->player.x--;
+      break;
+    case 's':
+      state->player.y++;
+      break;
+    case 'd':
+      state->player.x++;
+      break;
+  }
+
+  // Check if the player is hitting an obstacle
+  if (state->map[state->player.x][state->player.y] != TREE &&
+      state->map[state->player.x][state->player.y] != ROCK &&
+      state->map[state->player.x][state->player.y] != WATER) {
+    return;
+  }
+
+  // If the player is hitting an obstacle, move them back to their previous position
+  state->player.x--;
+  state->player.y--;
+}
+
+// Render the game state to the console
+void render_game_state(struct GameState *state) {
+  for (int i = 0; i < MAP_WIDTH; i++) {
+    for (int j = 0; j < MAP_HEIGHT; j++) {
+      switch (state->map[i][j]) {
+        case TREE:
+          printf("T");
+          break;
+        case ROCK:
+          printf("R");
+          break;
+        case WATER:
+          printf("W");
+          break;
+        default:
+          printf(" ");
+          break;
+      }
+    }
+    printf("\n");
+  }
+
+  printf("Player: (%d, %d)\n", state->player.x, state->player.y);
+}
+
+// Main game loop
+int main() {
+  struct GameState state;
+  init_game_state(&state);
+
+  char direction;
+  while (1) {
+    // Get the player's input
+    printf("Enter a direction (w, a, s, or d): ");
+    scanf("%c", &direction);
+
+    // Move the player
+    move_player(&state, direction);
+
+    // Render the game state
+    render_game_state(&state);
+
+    // Check if the player has won the game
+    if (state.player.x == MAP_WIDTH - 1 && state.player.y == MAP_HEIGHT - 1) {
+      printf("You win!\n");
+      exit(0);
+    }
+  }
+
+  return 0;
+}
