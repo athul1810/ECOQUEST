@@ -1,0 +1,28 @@
+canvas {
+  background-image: url(background.jpg);
+  background-size: cover;
+}
+
+#player {
+  fill: red;
+}
+
+.obstacle {
+  fill: green;
+}
+
+#player {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
